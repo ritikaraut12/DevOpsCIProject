@@ -2,5 +2,12 @@ function greet(name) {
   return `Hello, ${name}!`;
 }
 
-module.exports = greet;
-// Added login form layout - Ritika
+// ✅ New function: validate email
+function validateEmail(email) {
+  return /\S+@\S+\.\S+/.test(email);
+}
+
+module.exports = { greet, validateEmail };
+
+// Added email validation – Ritika
+

@@ -17,10 +17,5 @@ module.exports = { greet, validateEmail };
 // Added sidebar and navigation section - Ritika
 // Added YAML stage logic — Tamirlan
 // Configured Dev and QAT environments – Tamirlan
-function runTests() {
-  console.log("✅ Test Passed: greet function returns correct greeting");
-  console.log("✅ Test Passed: validateEmail returns true for valid emails");
-}
-
-runTests();
+// GitHub connected to Azure DevOps via PAT – Tamirlan
 

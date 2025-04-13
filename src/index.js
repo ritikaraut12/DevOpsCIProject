@@ -15,3 +15,4 @@ module.exports = { greet, validateEmail };
 
 
 // Added sidebar and navigation section - Ritika
+// Added YAML stage logic — Tamirlan

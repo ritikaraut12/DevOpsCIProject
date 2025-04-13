@@ -18,4 +18,6 @@ module.exports = { greet, validateEmail };
 // Added YAML stage logic — Tamirlan
 // Configured Dev and QAT environments – Tamirlan
 // GitHub connected to Azure DevOps via PAT – Tamirlan
+//Add test function for pipeline – closes #32
+
 

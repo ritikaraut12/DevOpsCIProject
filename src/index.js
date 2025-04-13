@@ -11,3 +11,4 @@ module.exports = { greet, validateEmail };
 
 // Added email validation – Ritika
 
+// Added user dashboard card layout section - Ritika

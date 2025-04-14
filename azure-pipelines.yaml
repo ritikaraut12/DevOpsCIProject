@@ -10,50 +10,60 @@ variables:
   PORT: '5000'
 
 steps:
-# ✅ Install Node.js
 - task: NodeTool@0
   inputs:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# ✅ Install dependencies
+# ✅ SonarQube: Prepare Analysis
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'SonarQube-Service'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'DevOpsCIProject'
+    cliProjectName: 'DevOps CI Project'
+    cliSources: '.'
+  displayName: 'Prepare SonarQube Analysis'
+
 - script: |
     npm install
   displayName: 'Install dependencies'
 
-# ✅ Build the project (if you have a build script)
 - script: |
     npm run build
   displayName: 'Build the project'
 
-# ✅ Run Unit Tests with Coverage
+# ✅ SonarQube: Run Analysis
+- task: SonarQubeAnalyze@5
+  displayName: 'Run SonarQube Analysis'
+
 - script: |
     npm test
-  displayName: 'Run unit tests with coverage'
+  displayName: 'Run Unit Tests with Coverage'
 
-# ✅ Publish Code Coverage Results
-- task: PublishCodeCoverageResults@1
+# ✅ SonarQube: Publish Report
+- task: SonarQubePublish@5
   inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
+    pollingTimeoutSec: '300'
+  displayName: 'Publish SonarQube Report'
 
-# ✅ Copy build output to staging folder
+# ✅ Copy to Artifact Staging Directory
 - task: CopyFiles@2
-  displayName: 'Copy files to staging'
   inputs:
-    contents: '**/*'
-    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    SourceFolder: '$(Build.SourcesDirectory)/src'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/drop'
+  displayName: 'Copy files to staging folder'
 
-# ✅ Publish Artifact (you'll see "drop" under Artifacts)
+# ✅ Publish Artifact
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    pathToPublish: '$(Build.ArtifactStagingDirectory)/drop'
+    artifactName: 'drop'
   displayName: 'Publish Artifact'
 
-# ✅ Simulated Delivery and Deployments
+# ---- Delivery/Deployment Stages (Mocked) ----
 - script: echo "Delivering build artifact..."
   displayName: 'Deliver Stage'
 
@@ -68,3 +78,18 @@ steps:
 
 - script: echo "Mock Production Deployment"
   displayName: 'Deploy to Production'
+
+# ---- Optional: Rerun tests for coverage upload ----
+- script: npm install
+  displayName: 'Install dependencies again'
+
+- script: npm test
+  displayName: 'Run unit tests again'
+
+# ✅ Code Coverage Reporting
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
+  displayName: 'Publish Code Coverage'

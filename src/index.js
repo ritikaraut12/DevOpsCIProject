@@ -1,14 +1,15 @@
-const express = require('express');
-const app = express();
-const port = 5000;
 
-app.get('/', (req, res) => {
-  res.send('🚀 Hello Ritika, your DevOps project is running on localhost!');
-});
+function greet(name) {
+  return Hello, ${name}!;
+}
 
-app.listen(port, () => {
-  console.log(`✅ Server running at http://localhost:${port}`);
-});
+// ✅ New function: validate email
+function validateEmail(email) {
+  return /\S+@\S+\.\S+/.test(email);
+}
+
+module.exports = { greet, validateEmail };
+
 
 
 // Added email validation – Ritika

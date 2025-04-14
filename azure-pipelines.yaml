@@ -10,47 +10,50 @@ variables:
   PORT: '5000'
 
 steps:
+# ✅ Install Node.js
 - task: NodeTool@0
   inputs:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-- task: SonarQubePrepare@5
-  inputs:
-    SonarQube: 'SonarQube-Service' 
-    scannerMode: 'CLI'
-    configMode: 'manual'
-    cliProjectKey: 'DevOpsCIProject'
-    cliProjectName: 'DevOps CI Project'
-    cliSources: '.'
-  displayName: 'Prepare SonarQube Analysis'
-
+# ✅ Install dependencies
 - script: |
     npm install
   displayName: 'Install dependencies'
 
+# ✅ Build the project (if you have a build script)
 - script: |
     npm run build
   displayName: 'Build the project'
 
-- task: SonarQubeAnalyze@5
-  displayName: 'Run SonarQube Analysis'
-
+# ✅ Run Unit Tests with Coverage
 - script: |
     npm test
-  displayName: 'Run Unit Tests with Coverage'
+  displayName: 'Run unit tests with coverage'
 
-- task: SonarQubePublish@5
+# ✅ Publish Code Coverage Results
+- task: PublishCodeCoverageResults@1
   inputs:
-    pollingTimeoutSec: '300'
-  displayName: 'Publish SonarQube Report'
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'
 
+# ✅ Copy build output to staging folder
+- task: CopyFiles@2
+  displayName: 'Copy files to staging'
+  inputs:
+    contents: '**/*'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+# ✅ Publish Artifact (you'll see "drop" under Artifacts)
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: 'dist'
-    artifactName: 'drop'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
   displayName: 'Publish Artifact'
 
+# ✅ Simulated Delivery and Deployments
 - script: echo "Delivering build artifact..."
   displayName: 'Deliver Stage'
 
@@ -65,15 +68,3 @@ steps:
 
 - script: echo "Mock Production Deployment"
   displayName: 'Deploy to Production'
-
-- script: npm install
-  displayName: 'Install dependencies'
-
-- script: npm test
-  displayName: 'Run unit tests with coverage'
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
-    reportDirectory: '$(System.DefaultWorkingDirectory)/coverage'

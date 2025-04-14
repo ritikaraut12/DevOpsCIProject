@@ -1,13 +1,15 @@
-function greet(name) {
-  return `Hello, ${name}!`;
-}
+const express = require('express');
+const app = express();
+const port = 5000;
 
-// ✅ New function: validate email
-function validateEmail(email) {
-  return /\S+@\S+\.\S+/.test(email);
-}
+app.get('/', (req, res) => {
+  res.send('🚀 Hello Ritika, your DevOps project is running on localhost!');
+});
 
-module.exports = { greet, validateEmail };
+app.listen(port, () => {
+  console.log(`✅ Server running at http://localhost:${port}`);
+});
+
 
 // Added email validation – Ritika
 // Added user dashboard card layout section - Ritika

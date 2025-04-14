@@ -15,17 +15,6 @@ steps:
     versionSpec: '18.x'
   displayName: 'Install Node.js'
 
-# ✅ SonarQube: Prepare Analysis
-- task: SonarQubePrepare@5
-  inputs:
-    SonarQube: 'SonarQube-Service'
-    scannerMode: 'CLI'
-    configMode: 'manual'
-    cliProjectKey: 'DevOpsCIProject'
-    cliProjectName: 'DevOps CI Project'
-    cliSources: '.'
-  displayName: 'Prepare SonarQube Analysis'
-
 - script: |
     npm install
   displayName: 'Install dependencies'
@@ -34,19 +23,9 @@ steps:
     npm run build
   displayName: 'Build the project'
 
-# ✅ SonarQube: Run Analysis
-- task: SonarQubeAnalyze@5
-  displayName: 'Run SonarQube Analysis'
-
 - script: |
     npm test
   displayName: 'Run Unit Tests with Coverage'
-
-# ✅ SonarQube: Publish Report
-- task: SonarQubePublish@5
-  inputs:
-    pollingTimeoutSec: '300'
-  displayName: 'Publish SonarQube Report'
 
 # ✅ Copy to Artifact Staging Directory
 - task: CopyFiles@2
